@@ -9,7 +9,45 @@ update_system() {
     sudo apt-get install -y jq
 }
 
-select_version_group() {
+choose_type(){
+    local type
+    type=$(whiptail --title "Download Server Version" \
+        --menu "Choose Server Type: "\
+        0 0 0\
+        "Vanilla" ""\
+        "PaperMC" "" \
+        "Spigot" "" \
+        "Bukkit" "" \
+    3>&1 1>&2 2>&3)
+    
+    if [ $? -eq 0 ]; then
+        echo "You selected type: $type"
+        case "$type" in
+            "Vanilla")
+                echo "Vanila"
+            ;;
+            "PaperMC")
+                echo "PaperMC"
+                select_paper_version_group
+            ;;
+            "Spigot")
+                echo "Spigot"
+            ;;
+            "Bukkit")
+                echo "Bukkit"
+            ;;
+            *)
+                echo "Unknown type"
+                exit 1
+            ;;
+        esac
+    else
+        echo "Cancelled."
+        exit 1
+    fi
+}
+
+select_paper_version_group() {
     local version_group
     version_group=$(whiptail --title "Download PaperMC Version Script" \
         --menu "Select PaperMC Version Group:" \
@@ -27,7 +65,7 @@ select_version_group() {
         "1.18" "" \
         "1.19" "" \
         "1.20" "" \
-        "1.21" "" 3>&1 1>&2 2>&3)
+    "1.21" "" 3>&1 1>&2 2>&3)
     
     if [ $? -eq 0 ]; then
         echo "You selected version group: $version_group"
@@ -44,63 +82,63 @@ select_specific_version() {
     case "$version_group" in
         "1.21")
             options=("1.21")
-            ;;
+        ;;
         "1.20")
             options=("1.20.6" "1.20.5" "1.20.4" "1.20.3" "1.20.2" "1.20.1" "1.20")
-            ;;
+        ;;
         "1.19")
             options=("1.19.4" "1.19.3" "1.19.2" "1.19.1" "1.19")
-            ;;
+        ;;
         "1.18")
             options=("1.18.2" "1.18.1" "1.18")
-            ;;
+        ;;
         "1.17")
             options=("1.17.1" "1.17")
-            ;;
+        ;;
         "1.16")
             options=("1.16.5" "1.16.4" "1.16.3" "1.16.2" "1.16.1")
-            ;;
+        ;;
         "1.15")
             options=("1.15.2" "1.15.1" "1.15")
-            ;;
+        ;;
         "1.14")
             options=("1.14.4" "1.14.3" "1.14.2" "1.14.1" "1.14")
-            ;;
+        ;;
         "1.13")
             options=("1.13.2" "1.13.1" "1.13" "1.13-prev7")
-            ;;
+        ;;
         "1.12")
             options=("1.12.2" "1.12.1" "1.12")
-            ;;
+        ;;
         "1.11")
             options=("1.11.2")
-            ;;
+        ;;
         "1.10")
             options=("1.10.2")
-            ;;
+        ;;
         "1.9")
             options=("1.9.4")
-            ;;
+        ;;
         "1.8")
             options=("1.8.8")
-            ;;
+        ;;
         *)
             echo "Unknown version group: $version_group"
             exit 1
-            ;;
+        ;;
     esac
-
+    
     local menu_options=""
     for opt in "${options[@]}"; do
         menu_options="${menu_options}${opt} >\n"
     done
-
+    
     local selected_version
     selected_version=$(whiptail --title "Select PaperMC Version" \
         --menu "Select a specific version for $version_group:" \
         0 0 0 \
         $(echo -e "$menu_options") \
-        3>&1 1>&2 2>&3)
+    3>&1 1>&2 2>&3)
     
     if [ $? -eq 0 ]; then
         echo "You selected version: $selected_version"
@@ -119,24 +157,24 @@ download_papermc() {
     local JAR_NAME
     local PAPERMC_URL
     local FILENAME
-
+    
     echo "Fetching latest build for version $selected_version..."
     LATEST_BUILD=$(curl -s https://api.papermc.io/v2/projects/paper/versions/$selected_version/builds | \
-        jq -r '.builds | map(select(.channel == "default") | .build) | .[-1]')
-
+    jq -r '.builds | map(select(.channel == "default") | .build) | .[-1]')
+    
     if [ "$LATEST_BUILD" != "null" ]; then
         JAR_NAME=paper-${selected_version}-${LATEST_BUILD}.jar
         PAPERMC_URL="https://api.papermc.io/v2/projects/paper/versions/${selected_version}/builds/${LATEST_BUILD}/downloads/${JAR_NAME}"
-
+        
         FILENAME=$(whiptail --title "Download PaperMC Version Script" \
-                            --inputbox "Enter filename for the download (Selected Version: $selected_version) \n (default: server.jar):" \
-                            8 40 "server.jar" 3>&1 1>&2 2>&3)
-
+            --inputbox "Enter filename for the download (Selected Version: $selected_version) \n (default: server.jar):" \
+        8 40 "server.jar" 3>&1 1>&2 2>&3)
+        
         if [ $? -ne 0 ]; then
             echo "Cancelled."
             exit 1
         fi
-
+        
         curl -o "${FILENAME}" $PAPERMC_URL
         echo "Download completed: ${FILENAME}"
     else
@@ -146,4 +184,4 @@ download_papermc() {
 
 # Main Stuff
 update_system
-select_version_group
+choose_type
