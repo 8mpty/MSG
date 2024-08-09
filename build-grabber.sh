@@ -21,26 +21,26 @@ choose_type(){
     3>&1 1>&2 2>&3)
     
     if [ $? -eq 0 ]; then
-        echo "You selected type: $type"
         case "$type" in
             "Vanilla")
-                echo "Vanila"
+                type="Vanila"
             ;;
             "PaperMC")
-                echo "PaperMC"
+                type="PaperMC"
                 select_paper_version_group
             ;;
             "Spigot")
-                echo "Spigot"
+                type="Spigot"
             ;;
             "Bukkit")
-                echo "Bukkit"
+                type="Bukkit"
             ;;
             *)
                 echo "Unknown type"
                 exit 1
             ;;
         esac
+        echo "You selected type: $type"
     else
         echo "Cancelled."
         exit 1
