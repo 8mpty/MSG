@@ -104,12 +104,46 @@ select_specific_version() {
     
     if [ $? -eq 0 ]; then
         echo "You selected version: $selected_version"
+        download_papermc "$version_group" "$selected_version"
     else
         echo "Cancelled."
         exit 1
     fi
 }
 
+download_papermc() {
+    local version_group=$1
+    local selected_version=$2
+    local MINECRAFT_VERSION="$version_group"
+    local LATEST_BUILD
+    local JAR_NAME
+    local PAPERMC_URL
+    local FILENAME
+
+    echo "Fetching latest build for version $selected_version..."
+    LATEST_BUILD=$(curl -s https://api.papermc.io/v2/projects/paper/versions/$selected_version/builds | \
+        jq -r '.builds | map(select(.channel == "default") | .build) | .[-1]')
+
+    if [ "$LATEST_BUILD" != "null" ]; then
+        JAR_NAME=paper-${selected_version}-${LATEST_BUILD}.jar
+        PAPERMC_URL="https://api.papermc.io/v2/projects/paper/versions/${selected_version}/builds/${LATEST_BUILD}/downloads/${JAR_NAME}"
+
+        FILENAME=$(whiptail --title "Download PaperMC Version Script" \
+                            --inputbox "Enter filename for the download (Selected Version: $selected_version) \n (default: server.jar):" \
+                            8 40 "server.jar" 3>&1 1>&2 2>&3)
+
+        if [ $? -ne 0 ]; then
+            echo "Cancelled."
+            exit 1
+        fi
+
+        curl -o "${FILENAME}" $PAPERMC_URL
+        echo "Download completed: ${FILENAME}"
+    else
+        echo "No stable build for version $selected_version found :("
+    fi
+}
+
 # Main Stuff
-# update_system
+update_system
 select_version_group
