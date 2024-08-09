@@ -7,6 +7,8 @@ update_system() {
     
     echo "Installing jq to check PaperMC versions"
     sudo apt-get install -y jq
+    
+    choose_type
 }
 
 choose_type(){
@@ -24,6 +26,7 @@ choose_type(){
         case "$type" in
             "Vanilla")
                 type="Vanila"
+                download_vanilla
             ;;
             "PaperMC")
                 type="PaperMC"
@@ -149,6 +152,21 @@ select_specific_version() {
     fi
 }
 
+download_vanilla(){
+    local vl="https://piston-data.mojang.com/v1/objects/59353fb40c36d304f2035d51e7d6e6baa98dc05c/server.jar"
+    FILENAME=$(whiptail --title "Download Vanilla Version Script" \
+        --inputbox "Enter filename for the download (default: server.jar)" \
+    8 40 "server.jar" 3>&1 1>&2 2>&3)
+    
+    if [ $? -ne 0 ]; then
+        echo "Cancelled."
+        exit 1
+    fi
+    
+    curl -o "${FILENAME}" $vl
+    echo "Download completed: ${FILENAME}"
+}
+
 download_papermc() {
     local version_group=$1
     local selected_version=$2
@@ -167,7 +185,7 @@ download_papermc() {
         PAPERMC_URL="https://api.papermc.io/v2/projects/paper/versions/${selected_version}/builds/${LATEST_BUILD}/downloads/${JAR_NAME}"
         
         FILENAME=$(whiptail --title "Download PaperMC Version Script" \
-            --inputbox "Enter filename for the download (Selected Version: $selected_version) \n (default: server.jar):" \
+            --inputbox "Enter filename for the download (Selected Version: $selected_version)" \
         8 40 "server.jar" 3>&1 1>&2 2>&3)
         
         if [ $? -ne 0 ]; then
@@ -184,4 +202,3 @@ download_papermc() {
 
 # Main Stuff
 update_system
-choose_type
