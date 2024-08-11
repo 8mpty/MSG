@@ -197,7 +197,7 @@ download_arclight(){
         exit 1
     fi
     
-    curl -o "${FILENAME}" $vl
+    curl -o "${FILENAME}" $ar
     echo "Download completed: ${FILENAME}"
 }
 
