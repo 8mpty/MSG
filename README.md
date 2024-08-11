@@ -11,7 +11,7 @@ Option 2: Using the commands in the terminal ☟
 <p>
  
 ```
-bash -c "$(wget -qLO - https://github.com/8mpty/MSG/main/build-grabber.sh)"
+bash -c "$(wget -qLO - https://raw.githubusercontent.com/8mpty/MSG/main/build-grabber.sh)"
 ```
 
 </p>
