@@ -9,8 +9,10 @@ Option 2: Using the commands in the terminal ☟
 
 <details><summary>Commands (Click Me)</summary>
 <p>
+ 
 ```
 bash -c "$(wget -qLO - https://github.com/8mpty/MSG/main/build-grabber.sh)"
 ```
+
 </p>
 </details>
