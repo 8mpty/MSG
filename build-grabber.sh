@@ -19,7 +19,8 @@ update_system() {
     sudo apt update -y
     sudo apt upgrade -y
     
-    echo "Installing jq to check PaperMC versions"
+    echo "Installing curl, jq to check PaperMC versions"
+    sudo apt install curl -y
     sudo apt-get install -y jq
     
     choose_type
