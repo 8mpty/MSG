@@ -31,6 +31,7 @@ choose_type(){
         --menu "Choose Server Type: "\
         0 0 0\
         "Vanilla" ""\
+        "ArcLight" ""\
         "PaperMC" "" \
         "Spigot" "" \
         "Bukkit" "" \
@@ -41,6 +42,10 @@ choose_type(){
             "Vanilla")
                 type="Vanila"
                 download_vanilla
+            ;;
+            "ArcLight")
+                type="ArcLight"
+                download_arclight
             ;;
             "PaperMC")
                 type="PaperMC"
@@ -169,6 +174,21 @@ select_specific_version() {
 download_vanilla(){
     local vl="https://piston-data.mojang.com/v1/objects/59353fb40c36d304f2035d51e7d6e6baa98dc05c/server.jar"
     FILENAME=$(whiptail --title "Download Vanilla Version Script" \
+        --inputbox "Enter filename for the download (default: server.jar)" \
+    8 40 "server.jar" 3>&1 1>&2 2>&3)
+    
+    if [ $? -ne 0 ]; then
+        echo "Cancelled."
+        exit 1
+    fi
+    
+    curl -o "${FILENAME}" $vl
+    echo "Download completed: ${FILENAME}"
+}
+
+download_vanilla(){
+    local ar="https://github.com/IzzelAliz/Arclight/releases/download/Trials%2F1.0.5/arclight-forge-1.20.1-1.0.5.jar"
+    FILENAME=$(whiptail --title "Download ArcLight Version Script" \
         --inputbox "Enter filename for the download (default: server.jar)" \
     8 40 "server.jar" 3>&1 1>&2 2>&3)
     
