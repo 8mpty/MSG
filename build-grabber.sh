@@ -1,5 +1,19 @@
 #!/bin/bash
 
+start() {
+    if (whiptail --title "System Update" --yesno "Would you like to update your system?" 0 0); then
+        if (whiptail --title "Confirm Update" --yes-button "Yes" --no-button "No" --yesno "Are you sure you want to update the system?" 0 0); then
+            update_system
+            whiptail --title "Update Complete" --msgbox "Your system has been updated." 0 0
+        else
+            whiptail --title "Update Skipped" --msgbox "System update was skipped." 0 0
+        fi
+    else
+        whiptail --title "Cancel" --msgbox "Exiting script." 0 0
+        exit 1
+    fi
+}
+
 update_system() {
     echo "Updating and upgrading system..."
     sudo apt update -y
@@ -201,4 +215,4 @@ download_papermc() {
 }
 
 # Main Stuff
-update_system
+start
