@@ -188,7 +188,7 @@ download_vanilla(){
 
 download_arclight(){
     local ar="https://github.com/IzzelAliz/Arclight/releases/download/Trials%2F1.0.5/arclight-forge-1.20.1-1.0.5.jar"
-    FILENAME=$(whiptail --title "Download ArcLight Version Script" \
+    FILENAMEARC=$(whiptail --title "Download ArcLight Version Script" \
         --inputbox "Enter filename for the download (default: server.jar)" \
     8 40 "server.jar" 3>&1 1>&2 2>&3)
     
@@ -197,8 +197,8 @@ download_arclight(){
         exit 1
     fi
     
-    curl -o "${FILENAME}" $ar
-    echo "Download completed: ${FILENAME}"
+    curl -o "${FILENAMEARC}" $ar
+    echo "Download completed: ${FILENAMEARC}"
 }
 
 download_papermc() {
